@@ -25,13 +25,13 @@
         :rules="formRules.mobile"
       />
       <van-field
-        v-model="user.sms"
+        v-model="user.code"
         center
         left-icon="smile-o"
         clearable
         label="短信验证码"
         placeholder="请输入短信验证码"
-        :rules="formRules.sms"
+        :rules="formRules.code"
       >
         <template #button>
           <van-count-down
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import { login } from '../../api/user.js'
 export default {
   name: 'LoginIndex',
@@ -72,7 +73,7 @@ export default {
     return {
       user: {
         mobile: '',
-        sms: ''
+        code: ''
       },
       formRules: {
         mobile: [
@@ -82,7 +83,7 @@ export default {
             message: '手机号格式错误'
           }
         ],
-        sms: [{ required: true, message: '验证码不能为空' }]
+        code: [{ required: true, message: '验证码不能为空' }]
       },
       isCountDownShow: false,
       isSendSmsLoading: false
@@ -93,6 +94,7 @@ export default {
   created () {},
   mounted () {},
   methods: {
+    ...mapMutations,
     onFailed (error) {
       console.log(error)
       if (error.errors[0]) {
@@ -124,6 +126,7 @@ export default {
         const res = await login(this.user)
         console.log(res, 'data')
         this.$toast.success('登录成功')
+        this.$store.commit('setUser', res.data)
       } catch (error) {
         console.log(error)
         this.$toast.fail('登录失败')
